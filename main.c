@@ -1,25 +1,39 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 bool isFactor(int num, int factor);
 
 bool isPrime(int num);
 
-void printPrime(int num, int factor);
+int* numberDecompose(int num);
 
-int main() {
-    int num;
-    printf("Enter an integer: ");
-    scanf("%d", &num);
+void numberDecomposeRecursive(int num, int i, int** primes, int* count);
 
-    printf("Prime numbers between 1 and %d are: ", num);
-    for(int i = 2; i <= num; i++) {
-        if (isFactor(num, i) && isPrime(i)) {
-            printPrime(num, i);
-        }
+void numberDecomposeRecursive(int num, int i, int** primes, int* count) {
+    if (i > num) {
+        return;
     }
 
-    return 0;
+    if (isFactor(num, i) && isPrime(i)) {
+        num = num / i;
+        (*count)++;
+        *primes = realloc(*primes, (*count + 1) * sizeof(int));
+        (*primes)[*count - 1] = i;
+        numberDecomposeRecursive(num, i, primes, count);
+    } else {
+        numberDecomposeRecursive(num, i + 1, primes, count);
+    }
+}
+
+int* numberDecompose(int num) {
+    int count = 0;
+    int* primes = NULL;
+
+    numberDecomposeRecursive(num, 2, &primes, &count);
+
+    primes[count] = -1;
+    return primes;
 }
 
 bool isFactor(int num, int factor) {
@@ -34,15 +48,4 @@ bool isPrime(int num) {
         }
     }
     return true;
-}
-
-void printPrime(int num, int factor){
-    printf("%d ", factor);
-
-    int division = num / factor;
-
-    if (isFactor(division, factor)) {
-        printPrime(division, factor);
-    }
-
 }
