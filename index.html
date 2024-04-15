@@ -9,7 +9,8 @@
 </head>
 <body>
     <label for="numberInput">Enter number:</label>
-    <input type="text" id="numberInput">
+    <input type="text" id="numberInput" min="0" max="2147483646">
+    <p>Enter  a number between 0 and 2147483646</p>
     <button onclick="generateSolution()">Decompose number</button>
     <p>Result:</p>
     <div id="numbersResult"></div>
