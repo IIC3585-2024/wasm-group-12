@@ -1,6 +1,6 @@
 function generateSolution() {
-  const input = document.getElementById('numberInput').value;
-  const number = parseInt(input);
+  let startTime = performance.now();
+  const number = Number(document.getElementById("numero").value);
 
   const decomposedNumbersPtr = Module._numberDecompose(number);
 
@@ -11,16 +11,17 @@ function generateSolution() {
   }
 
   // Crea un nuevo array a partir de los valores en HEAP32
-  const result = new Uint32Array(Module.HEAP32.buffer, decomposedNumbersPtr, arrayLength);
+  const result = new Array(arrayLength);
+  for (let i = 0; i < arrayLength; i++) {
+    result[i] = Module.HEAP32[(decomposedNumbersPtr / 4) + i];
+  }
 
-  const resultArray = Array.from(result);
+  let endTime = performance.now();
+  let tiempoEjecucion = endTime - startTime;
 
-  // Obtiene el div con id="numbersResult"
-  const resultDiv = document.getElementById('numbersResult');
+  // Mostrar los resultados en el elemento con el ID "resultado"
+  document.getElementById("resultado").innerText = "Descomposición de " + number + " en factores primos: " + result.join(", ");
 
-  // Crea una cadena con los valores del array
-  const resultString = resultArray.join(', ');
-
-  // Imprime el resultado en el div
-  resultDiv.textContent = resultString;
+  // Mostrar el tiempo de ejecución en el elemento con el ID "tiempo"
+  document.getElementById("tiempo").innerText = "Tiempo de ejecución: " + tiempoEjecucion.toFixed(2) + " milisegundos";
 }

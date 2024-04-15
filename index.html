@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descomposición de prima</title>
+    <title>Descomposición de números</title>
     <link rel="stylesheet" href="styles.css">
     <script src="prime_decomposition.js"></script>
     <script src="index.js"></script>
+    <script src="generator.js"></script>
+    <script src="wasm.js"></script>
 </head>
 <body>
     <header>
@@ -17,6 +19,7 @@
             <label for="numero">Ingrese un número:</label>
             <input type="number" id="numero">
             <button onclick="descomponerJS()">Descomponer (JS)</button>
+            <button onclick="generateSolution()">Descomponer (WebAssembly)</button>
         </div>
         <div id="resultado" class="resultado-container"></div>
         <div id="tiempo" class="tiempo-container"></div>
