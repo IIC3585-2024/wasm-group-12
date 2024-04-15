@@ -18,6 +18,12 @@ int* bruteForce(int n, int* size) {
     int index = 0;
     int initialNumber;
 
+    if (isPrime(n)) {
+        factors[index++] = n;
+        *size = index;
+        return factors;
+    }
+
     for (int i = 2; i <= n / 2; i++) {
         initialNumber = 1;
 
