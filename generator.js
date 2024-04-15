@@ -1,4 +1,4 @@
-function generateSolution() {
+function generateSolution(mode) {
   let startTime = performance.now();
   const number = Number(document.getElementById("numero").value);
 

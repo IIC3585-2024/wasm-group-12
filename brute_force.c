@@ -38,11 +38,7 @@ int* bruteForce(int n, int* size) {
     return factors;
 }
 
-int main() {
-    int n;
-    printf("Enter an integer: ");
-    scanf("%d", &n);
-
+int mainbf(int n) {
     int size;
     int* factors = bruteForce(n, &size);
 
