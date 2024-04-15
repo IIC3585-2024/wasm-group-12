@@ -1,4 +1,8 @@
-# WASM
+# WASM - G12
+
+* Cristóbal Pérez-Cotapos
+* Sebastián Cavagnaro
+* Benjamín Vásquez
 
 ## Prerequisites
 
