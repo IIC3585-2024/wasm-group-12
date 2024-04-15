@@ -20,8 +20,8 @@ function generateSolution() {
   let tiempoEjecucion = endTime - startTime;
 
   // Mostrar los resultados en el elemento con el ID "resultado"
-  document.getElementById("resultado").innerText = "Descomposición de " + number + " en factores primos: " + result.join(", ");
+  document.getElementById("resultadoWasm").innerText = "Factores primos: " + result.join(", ");
 
   // Mostrar el tiempo de ejecución en el elemento con el ID "tiempo"
-  document.getElementById("tiempo").innerText = "Tiempo de ejecución: " + tiempoEjecucion.toFixed(2) + " milisegundos";
+  document.getElementById("tiempoWasm").innerText = tiempoEjecucion.toFixed(2) + " milisegundos";
 }

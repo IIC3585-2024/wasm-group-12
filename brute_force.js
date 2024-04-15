@@ -25,5 +25,3 @@ function isPrime(n){
     }
     return true;
 }
-
-console.log(bruteForce(1000000));
