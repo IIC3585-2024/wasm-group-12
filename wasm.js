@@ -643,7 +643,7 @@ function setValue(ptr, value, type = 'i8', noSafe) {
       case 'i8': HEAP8[((ptr)>>0)] = value; break;
       case 'i16': HEAP16[((ptr)>>1)] = value; break;
       case 'i32': HEAP32[((ptr)>>2)] = value; break;
-      case 'i64': (tempI64 = [value>>>0,(tempDouble=value,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? ((Math.min((+(Math.floor((tempDouble)/4294967296.0))), 4294967295.0))|0)>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)],HEAP32[((ptr)>>2)] = tempI64[0],HEAP32[(((ptr)+(4))>>2)] = tempI64[1]); break;
+      case 'i64': HEAP64[((ptr)>>3)] = BigInt(value); break;
       case 'float': HEAPF32[((ptr)>>2)] = value; break;
       case 'double': HEAPF64[((ptr)>>3)] = value; break;
       default: abort('invalid type for setValue: ' + type);
@@ -660,7 +660,7 @@ function getValue(ptr, type = 'i8', noSafe) {
       case 'i8': return HEAP8[((ptr)>>0)];
       case 'i16': return HEAP16[((ptr)>>1)];
       case 'i32': return HEAP32[((ptr)>>2)];
-      case 'i64': return HEAP32[((ptr)>>2)];
+      case 'i64': return Number(HEAP64[((ptr)>>3)]);
       case 'float': return HEAPF32[((ptr)>>2)];
       case 'double': return Number(HEAPF64[((ptr)>>3)]);
       default: abort('invalid type for getValue: ' + type);
@@ -767,13 +767,6 @@ function cwrap(ident, returnType, argTypes, opts) {
 
 // We used to include malloc/free by default in the past. Show a helpful error in
 // builds with assertions.
-function _malloc() {
-  abort("malloc() called but not included in the build - add '_malloc' to EXPORTED_FUNCTIONS");
-}
-function _free() {
-  // Show a helpful error since we used to include free by default in the past.
-  abort("free() called but not included in the build - add '_free' to EXPORTED_FUNCTIONS");
-}
 
 // include: runtime_legacy.js
 
@@ -798,7 +791,7 @@ function allocate(slab, allocator) {
   if (allocator == ALLOC_STACK) {
     ret = stackAlloc(slab.length);
   } else {
-    ret = abort('malloc was not included, but is needed in allocate. Adding "_malloc" to EXPORTED_FUNCTIONS should fix that. This may be a bug in the compiler, please file an issue.');;
+    ret = _malloc(slab.length);
   }
 
   if (!slab.subarray && !slab.slice) {
@@ -1144,7 +1137,7 @@ function lengthBytesUTF32(str) {
 // It is the responsibility of the caller to free() that memory.
 function allocateUTF8(str) {
   var size = lengthBytesUTF8(str) + 1;
-  var ret = abort('malloc was not included, but is needed in allocateUTF8. Adding "_malloc" to EXPORTED_FUNCTIONS should fix that. This may be a bug in the compiler, please file an issue.');;
+  var ret = _malloc(size);
   if (ret) stringToUTF8Array(str, HEAP8, ret, size);
   return ret;
 }
@@ -1220,6 +1213,12 @@ var HEAP,
   HEAPU32,
 /** @type {Float32Array} */
   HEAPF32,
+/* BigInt64Array type is not correctly defined in closure
+/** not-@type {BigInt64Array} */
+  HEAP64,
+/* BigUInt64Array type is not correctly defined in closure
+/** not-t@type {BigUint64Array} */
+  HEAPU64,
 /** @type {Float64Array} */
   HEAPF64;
 
@@ -1233,6 +1232,8 @@ function updateGlobalBufferAndViews(buf) {
   Module['HEAPU32'] = HEAPU32 = new Uint32Array(buf);
   Module['HEAPF32'] = HEAPF32 = new Float32Array(buf);
   Module['HEAPF64'] = HEAPF64 = new Float64Array(buf);
+  Module['HEAP64'] = HEAP64 = new BigInt64Array(buf);
+  Module['HEAPU64'] = HEAPU64 = new BigUint64Array(buf);
 }
 
 var TOTAL_STACK = 5242880;
@@ -1909,10 +1910,22 @@ var _isPrime = Module["_isPrime"] = createExportWrapper("isPrime");
 var _numberDecompose = Module["_numberDecompose"] = createExportWrapper("numberDecompose");
 
 /** @type {function(...*):?} */
+var _prime_decomposition = Module["_prime_decomposition"] = createExportWrapper("prime_decomposition");
+
+/** @type {function(...*):?} */
+var _malloc = Module["_malloc"] = createExportWrapper("malloc");
+
+/** @type {function(...*):?} */
+var _bruteForce = Module["_bruteForce"] = createExportWrapper("bruteForce");
+
+/** @type {function(...*):?} */
 var ___errno_location = Module["___errno_location"] = createExportWrapper("__errno_location");
 
 /** @type {function(...*):?} */
 var ___stdio_exit = Module["___stdio_exit"] = createExportWrapper("__stdio_exit");
+
+/** @type {function(...*):?} */
+var _free = Module["_free"] = createExportWrapper("free");
 
 /** @type {function(...*):?} */
 var _emscripten_stack_init = Module["_emscripten_stack_init"] = function() {
@@ -1951,10 +1964,10 @@ var stackAlloc = Module["stackAlloc"] = createExportWrapper("stackAlloc");
 
 if (!Object.getOwnPropertyDescriptor(Module, "intArrayFromString")) Module["intArrayFromString"] = () => abort("'intArrayFromString' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "intArrayToString")) Module["intArrayToString"] = () => abort("'intArrayToString' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
-if (!Object.getOwnPropertyDescriptor(Module, "ccall")) Module["ccall"] = () => abort("'ccall' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
-if (!Object.getOwnPropertyDescriptor(Module, "cwrap")) Module["cwrap"] = () => abort("'cwrap' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
+Module["ccall"] = ccall;
+Module["cwrap"] = cwrap;
 if (!Object.getOwnPropertyDescriptor(Module, "setValue")) Module["setValue"] = () => abort("'setValue' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
-if (!Object.getOwnPropertyDescriptor(Module, "getValue")) Module["getValue"] = () => abort("'getValue' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
+Module["getValue"] = getValue;
 if (!Object.getOwnPropertyDescriptor(Module, "allocate")) Module["allocate"] = () => abort("'allocate' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "UTF8ArrayToString")) Module["UTF8ArrayToString"] = () => abort("'UTF8ArrayToString' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "UTF8ToString")) Module["UTF8ToString"] = () => abort("'UTF8ToString' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
@@ -2030,8 +2043,6 @@ if (!Object.getOwnPropertyDescriptor(Module, "jstoi_s")) Module["jstoi_s"] = () 
 if (!Object.getOwnPropertyDescriptor(Module, "getExecutableName")) Module["getExecutableName"] = () => abort("'getExecutableName' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "listenOnce")) Module["listenOnce"] = () => abort("'listenOnce' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "autoResumeAudioContext")) Module["autoResumeAudioContext"] = () => abort("'autoResumeAudioContext' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
-if (!Object.getOwnPropertyDescriptor(Module, "dynCallLegacy")) Module["dynCallLegacy"] = () => abort("'dynCallLegacy' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
-if (!Object.getOwnPropertyDescriptor(Module, "getDynCaller")) Module["getDynCaller"] = () => abort("'getDynCaller' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "dynCall")) Module["dynCall"] = () => abort("'dynCall' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "callRuntimeCallbacks")) Module["callRuntimeCallbacks"] = () => abort("'callRuntimeCallbacks' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
 if (!Object.getOwnPropertyDescriptor(Module, "wasmTableMirror")) Module["wasmTableMirror"] = () => abort("'wasmTableMirror' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the FAQ)");
