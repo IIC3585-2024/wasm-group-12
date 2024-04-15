@@ -1,5 +1,3 @@
-
-
 function prime_decomposition(n) {
     let factors = [];
     for (let i = 2; i <= n; i++) {

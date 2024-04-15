@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descomposición de prima</title>
+    <title>Descomposición de números</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="prime_decomposition.js"></script>
-    <script src="index.js"></script>
+    <script src="./js/brute_force.js"></script>
+    <script src="./js/prime_decomposition.js"></script>
+    <script src="decomposer.js"></script>
+    <script src="wasm.js"></script>
 </head>
 <body>
     <header>
@@ -16,10 +18,44 @@
         <div class="input-container">
             <label for="numero">Ingrese un número:</label>
             <input type="number" id="numero">
-            <button onclick="descomponerJS()">Descomponer (JS)</button>
         </div>
-        <div id="resultado" class="resultado-container"></div>
-        <div id="tiempo" class="tiempo-container"></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>Botón</th>
+                    <th>Resultado</th>
+                    <th>Tiempo de Ejecución</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>JS - Descomposición Primaria</td>
+                    <td><button onclick="decomposerJS(mode='primeDecompositionJS')">Descomponer (JS)</button></td>
+                    <td><div id="resultadoprimeDecompositionJS" class="resultado-container"></div></td>
+                    <td><div id="tiempoprimeDecompositionJS" class="tiempo-container"></div></td>
+                </tr>
+                <tr>
+                    <td>JS - Fuerza Bruta</td>
+                    <td><button onclick="decomposerJS(mode='bruteForceJS')">Descomponer (JS) Fuerza Bruta</button></td>
+                    <td><div id="resultadobruteForceJS" class="resultado-container"></div></td>
+                    <td><div id="tiempobruteForceJS" class="tiempo-container"></div></td>
+                </tr>
+                <tr>
+                    <td>C - Descomposición primaria</td>
+                    <td><button onclick="decomposerC(mode='primeDescompositionC')">Descomponer (C)</button></td>
+                    <td><div id="resultadoprimeDescompositionC" class="resultado-container"></div></td>
+                    <td><div id="tiempoprimeDescompositionC" class="tiempo-container"></div></td>
+                </tr>
+                <tr>
+                    <td>C - Fuerza Bruta</td>
+                    <td><button onclick="decomposerC(mode='bruteForceC')">Descomponer (C) Fuerza Bruta</button></td>
+                    <td><div id="resultadobruteForceC" class="resultado-container"></div></td>
+                    <td><div id="tiempobruteForceC" class="tiempo-container"></div></td>
+                </tr>
+            </tbody>
+        </table>
     </main>
     <footer>
         <p>© 2024 Descomposición de números</p>
