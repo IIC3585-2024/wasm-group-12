@@ -8,27 +8,6 @@ bool isPrime(long num);
 
 long* numberDecompose(long num);
 
-// int main() {
-//     // long num;
-//     // prlongf("Enter an longeger: ");
-//     // scanf("%d", &num);
-
-//     // prlongf("Prime numbers between 1 and %d are: ", num);
-//     // for(long i = 2; i <= num; i++) {
-//     //     if (isFactor(num, i) && isPrime(i)) {
-//     //         prlongPrime(num, i);
-//     //     }
-//     // }
-
-//     long* array = numberDecompose(0); 
-
-//     for (long i = 0; array[i] != -1; i++) {
-//         printf("%ld\n", array[i]);
-//     }
-
-//     return 0;
-// }
-
 void numberDecomposeRecursive(long num, long i, long** primes, long* count);
 
 void numberDecomposeRecursive(long num, long i, long** primes, long* count) {
@@ -36,9 +15,6 @@ void numberDecomposeRecursive(long num, long i, long** primes, long* count) {
         return;
     }
     
-    // printf("num: %ld, i: %ld\n", num, i);
-    // printf("isFactor: %d, isPrime: %d\n", isFactor(num, i), isPrime(i));
-
     if (isFactor(num, i) && isPrime(i)) {
         num = num / i;
         (*count)++;
@@ -51,13 +27,8 @@ void numberDecomposeRecursive(long num, long i, long** primes, long* count) {
 }
 
 long* numberDecompose(long num) {
-
-
-
     long count = 0;
     long* primes;
-
-    
 
     numberDecomposeRecursive(num, 2, &primes, &count);
 
