@@ -28,7 +28,7 @@ void numberDecomposeRecursive(long num, long i, long** primes, long* count) {
 
 long* numberDecompose(long num) {
     long count = 0;
-    long* primes;
+    long* primes = NULL;
 
     numberDecomposeRecursive(num, 2, &primes, &count);
 
