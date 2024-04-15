@@ -2,6 +2,11 @@ function bruteForce(n){
     let factors = [];
     let initialNumber;
 
+    if (isPrime(n)){
+        factors.push(n);
+        return factors;
+    }
+
     for(let i = 2; i <= n/2; i++){
         initialNumber = 1;
 
@@ -26,4 +31,4 @@ function isPrime(n){
     return true;
 }
 
-console.log(bruteForce(1000000));
+console.log(bruteForce(12323));
